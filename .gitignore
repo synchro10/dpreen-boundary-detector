@@ -86,6 +86,3 @@ dkms.conf
 cmake-build-debug/
 .gitignore
 .idea/
-CMakeLists.txt
-Sources/
-pictures/
