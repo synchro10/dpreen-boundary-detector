@@ -32,11 +32,17 @@ int main() {
     cv::Mat DYB = ocs.getDYB();
     cv::Mat DGR = ocs.getDGR();
     cv::Mat DRG = ocs.getDRG();
+    cv::Mat luminanceON = ocs.getLuminanceON();
+    cv::Mat luminanceOFF = ocs.getLuminanceOFF();
+
 
     imshow( "Display DBY", DBY);                   // Show our image inside it.
     imshow( "Display DYB", DYB);                   // Show our image inside it.
     imshow( "Display DGR", DGR);                   // Show our image inside it.
     imshow( "Display DRG", DRG);                   // Show our image inside it.
+    imshow( "Display loff", luminanceOFF);                   // Show our image inside it.
+    imshow( "Display lon", luminanceON);                   // Show our image inside it.
+
 
     waitKey(0);
 

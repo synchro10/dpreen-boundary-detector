@@ -13,8 +13,15 @@ public:
     cv::Mat getDGR();
     cv::Mat getDBY();
     cv::Mat getDYB();
+    cv::Mat getLuminanceON();
+    virtual cv::Mat getLuminanceOFF() = 0;
+
+    //cv::Mat get
 
     void init(cv::Mat src);
+
+private:
+
 
 protected:
     float const A = 10.0;
@@ -25,6 +32,7 @@ protected:
     cv::Mat green;
     cv::Mat blue;
     cv::Mat yellow;
+    cv::Mat luminance;
 
     float sigmaE;
     float sigmaI;
@@ -32,11 +40,14 @@ protected:
 
     cv::Mat eGaussianKernel;
     cv::Mat iGaussianKernel;
+    cv::Mat kernelIE;
+    cv::Mat kernelEI;
+
 
     //May have parallel implementation:
     virtual cv::Mat getEKernel() = 0;
     virtual cv::Mat getIKernel() = 0;
-    virtual cv::Mat getRezult(cv::Mat srcL, cv::Mat srcM) = 0;
+    virtual cv::Mat getResult(cv::Mat srcL, cv::Mat srcM) = 0;
 
 };
 

@@ -11,11 +11,16 @@ class OCS : public OpponentColorStage{
 public:
     explicit OCS(int scale);
 
+    cv::Mat getResult(cv::Mat srcL, cv::Mat srcM) override;
+
+    cv::Mat getLuminanceOFF() override;
+
+private:
+
     cv::Mat getEKernel() override;
 
     cv::Mat getIKernel() override;
 
-    cv::Mat getRezult(cv::Mat srcL, cv::Mat srcM) override;
 };
 
 
