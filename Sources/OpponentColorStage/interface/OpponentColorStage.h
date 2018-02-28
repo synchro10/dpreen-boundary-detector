@@ -7,7 +7,7 @@
 class OpponentColorStage {
 
 public:
-    OpponentColorStage(int scale);
+    explicit OpponentColorStage(int scale);
 
     cv::Mat getDRG();
     cv::Mat getDGR();
@@ -16,17 +16,11 @@ public:
 
     void init(cv::Mat src);
 
-
-private:
-
-    int const kernelSize = 7;
-
-
-
 protected:
     float const A = 10.0;
     float const B = 3.0;
     float const C = 0.8;
+    int const kernelSize = 7;
     cv::Mat red;
     cv::Mat green;
     cv::Mat blue;
@@ -40,9 +34,9 @@ protected:
     cv::Mat iGaussianKernel;
 
     //May have parallel implementation:
-    virtual cv::Mat getEKernel();
-    virtual cv::Mat getIKernel();
-    virtual cv::Mat getRezult(cv::Mat srcL, cv::Mat srcM);
+    virtual cv::Mat getEKernel() = 0;
+    virtual cv::Mat getIKernel() = 0;
+    virtual cv::Mat getRezult(cv::Mat srcL, cv::Mat srcM) = 0;
 
 };
 

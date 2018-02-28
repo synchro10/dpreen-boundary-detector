@@ -1,10 +1,14 @@
 #include <iostream>
 #include <opencv/cv.hpp>
+#include "OpponentColorStage/interface/OpponentColorStage.h"
+#include "OpponentColorStage/OCS.h"
+
+#define SCALE 1
 
 using namespace cv;
 using namespace std;
 
-void printMat(cv::Mat mat){
+void printMat(const cv::Mat &mat){
     //normalize(mat, mat, 255, 0);
     imshow( "Display mat", mat);                   // Show our image inside it.
     waitKey(0);
@@ -20,6 +24,21 @@ int main() {
         return -1;
     }
 
-    printMat(img);
+    //printMat(img);
+
+    OCS ocs(SCALE);
+    ocs.init(img);
+    cv::Mat DBY = ocs.getDBY();
+    cv::Mat DYB = ocs.getDYB();
+    cv::Mat DGR = ocs.getDGR();
+    cv::Mat DRG = ocs.getDRG();
+
+    imshow( "Display DBY", DBY);                   // Show our image inside it.
+    imshow( "Display DYB", DYB);                   // Show our image inside it.
+    imshow( "Display DGR", DGR);                   // Show our image inside it.
+    imshow( "Display DRG", DRG);                   // Show our image inside it.
+
+    waitKey(0);
+
 
 }
