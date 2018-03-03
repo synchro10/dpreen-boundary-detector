@@ -37,7 +37,7 @@ int main() {
     cv::Mat luminanceOFF = ocs.getLuminanceOFF();
 
 
-    imshow( "Display DBY", DBY);                   // Show our image inside it.
+    //imshow( "Display DBY", DBY);                   // Show our image inside it.
 /*
     imshow( "Display DYB", DYB);                   // Show our image inside it.
     imshow( "Display DGR", DGR);                   // Show our image inside it.
@@ -47,10 +47,13 @@ int main() {
 */
 
     ChromaticContourStage ccs;
-    cv::Mat eOut = ccs.getSimpleCellE(DBY, SCALE, 3);
-    cv::Mat fOut = ccs.getSimpleCellF(DBY, SCALE, 3);
+    ccs.init(luminanceON, luminanceOFF, DRG, DGR, DBY, DYB);
+    cv::Mat ccsOut = ccs.getStageOutput(SCALE, 3);
+    printMat(ccsOut);
+    //cv::Mat eOut = ccs.getSimpleCellE(DBY, SCALE, 1);
+    //cv::Mat fOut = ccs.getSimpleCellF(DBY, SCALE, 1);
 
-    printMat(fOut);
+    //printMat(fOut);
     //imshow( "Display eOut", eOut);                   // Show our image inside it.
 
 
