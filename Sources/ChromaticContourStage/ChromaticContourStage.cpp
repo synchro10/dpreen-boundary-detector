@@ -54,7 +54,7 @@ cv::Mat ChromaticContourStage::getSimpleCellF(cv::Mat src, int scale, int k) {
 cv::Mat ChromaticContourStage::getSimpleCellActivity(cv::Mat src, cv::Mat filter) {
 
     cv::Mat absFilter;
-    cv::threshold(filter, absFilter, 0.0, 255, cv::THRESH_TOZERO);
+    cv::threshold(filter, absFilter, 0.0, 255, cv::THRESH_TOZERO); //TODO: модуль неправильно посчитан
 
     cv::Mat filtered;
     cv::filter2D(src, filtered, src.depth(), filter);
