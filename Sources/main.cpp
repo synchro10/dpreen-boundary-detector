@@ -25,7 +25,6 @@ int main() {
         return -1;
     }
 
-    //printMat(img);
 
     OCS ocs(SCALE);
     ocs.init(img);
