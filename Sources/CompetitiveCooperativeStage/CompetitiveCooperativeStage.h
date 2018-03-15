@@ -23,9 +23,12 @@ private:
     float const Kf = 5.0;
     float const Cc = 0.3;
     float const Ci = 0.1;
-    int const kernelSize = 5;
+    int const gaussianKernelSize = 5;
+    int const bipKernelSize = 5;
 
     cv::Mat getGaussianKernel(float r, float tau, float sigma); //to get rotated(r grades) gaussian with custom circular symmetry(tau)
+
+    cv::Mat getBipKernel(float k, float kl, float dc); //to get BIP kernel
 
 
 };
