@@ -7,6 +7,8 @@
 
 
 #include <opencv2/core/mat.hpp>
+#include "../Model/IArchitecture.h"
+
 #define MAX_SCALE 3
 #define MAX_K 6
 #define KERNEL_SIZE 3

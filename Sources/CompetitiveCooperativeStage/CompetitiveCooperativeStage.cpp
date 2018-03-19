@@ -5,7 +5,9 @@
 #include <opencv2/imgproc.hpp>
 #include "CompetitiveCooperativeStage.h"
 
+CompetitiveCooperativeStage::CompetitiveCooperativeStage() {
 
+}
 
 cv::Mat CompetitiveCooperativeStage::getStageOutput(int scale) {
     return cv::Mat();
@@ -106,3 +108,5 @@ cv::Mat CompetitiveCooperativeStage::getGaussianKernel(float r, float tau, float
 
     return gaussianKernel;
 }
+
+

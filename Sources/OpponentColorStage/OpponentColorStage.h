@@ -3,6 +3,7 @@
 
 
 #include <opencv2/core/mat.hpp>
+#include "../Model/IArchitecture.h"
 
 class OpponentColorStage {
 
@@ -14,7 +15,7 @@ public:
     cv::Mat getDBY();
     cv::Mat getDYB();
     cv::Mat getLuminanceON();
-    virtual cv::Mat getLuminanceOFF() = 0;
+    cv::Mat getLuminanceOFF();
 
     //cv::Mat get
 
@@ -45,9 +46,9 @@ protected:
 
 
     //May have parallel implementation:
-    virtual cv::Mat getEKernel() = 0;
-    virtual cv::Mat getIKernel() = 0;
-    virtual cv::Mat getResult(cv::Mat srcL, cv::Mat srcM) = 0;
+    cv::Mat getEKernel();
+    cv::Mat getIKernel();
+    cv::Mat getResult(cv::Mat srcL, cv::Mat srcM);
 
 };
 

@@ -7,6 +7,7 @@
 
 
 #include <opencv2/core/mat.hpp>
+#include "../Model/IArchitecture.h"
 
 class CompetitiveCooperativeStage {
 

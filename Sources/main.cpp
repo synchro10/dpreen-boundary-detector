@@ -1,25 +1,20 @@
 #include <iostream>
 #include <opencv/cv.hpp>
-#include "OpponentColorStage/interface/OpponentColorStage.h"
-#include "OpponentColorStage/OCS.h"
+#include "OpponentColorStage/OpponentColorStage.h"
 #include "ChromaticContourStage/ChromaticContourStage.h"
+#include "OpponentColorStage/OpponentColorStage.h"
+#include "Utility/Util.h"
 
 #define SCALE 1
+#define EPS 0.0001
 
 
 using namespace cv;
 using namespace std;
 
-void printMat(const cv::Mat &mat){
-    normalize(mat, mat, 255, 0);
-    imshow( "Display mat", mat);                   // Show our image inside it.
-    waitKey(0);
-}
-
 int main() {
 
     Mat img = imread( "../pictures/1.jpg", CV_LOAD_IMAGE_COLOR);
-
     if(! img.data )                              // Check for invalid input
     {
         cout <<  "Could not open or find the image" << std::endl ;
@@ -27,7 +22,7 @@ int main() {
     }
 
 
-    OCS ocs(SCALE);
+    OpponentColorStage ocs(SCALE);
     ocs.init(img);
     cv::Mat DBY = ocs.getDBY();
     cv::Mat DYB = ocs.getDYB();
@@ -35,7 +30,6 @@ int main() {
     cv::Mat DRG = ocs.getDRG();
     cv::Mat luminanceON = ocs.getLuminanceON();
     cv::Mat luminanceOFF = ocs.getLuminanceOFF();
-
 
     //imshow( "Display DBY", DBY);                   // Show our image inside it.
 /*
@@ -49,14 +43,12 @@ int main() {
     ChromaticContourStage ccs;
     ccs.init(luminanceON, luminanceOFF, DRG, DGR, DBY, DYB);
     cv::Mat ccsOut = ccs.getStageOutput(SCALE, 3);
-    printMat(ccsOut);
+    Util::printMat(ccsOut);
     //cv::Mat eOut = ccs.getSimpleCellE(DBY, SCALE, 1);
     //cv::Mat fOut = ccs.getSimpleCellF(DBY, SCALE, 1);
 
-    //printMat(fOut);
+    //Util::printMat(fOut);
     //imshow( "Display eOut", eOut);                   // Show our image inside it.
-
-
 
     waitKey(0);
 
