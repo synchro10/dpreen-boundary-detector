@@ -3,7 +3,8 @@
 
 
 #include <opencv2/core/mat.hpp>
-#include "../Model/IArchitecture.h"
+#include <map>
+#include "../Model/IModel.h"
 
 class OpponentColorStage {
 
@@ -16,6 +17,8 @@ public:
     cv::Mat getDYB();
     cv::Mat getLuminanceON();
     cv::Mat getLuminanceOFF();
+
+    std::map<OPPONENT, cv::Mat> GetOutput();
 
     //cv::Mat get
 

@@ -7,7 +7,7 @@
 
 
 #include <opencv2/core/mat.hpp>
-#include "../Model/IArchitecture.h"
+#include "../Model/IModel.h"
 
 #define MAX_SCALE 3
 #define MAX_K 6
@@ -19,6 +19,7 @@ class ChromaticContourStage {
 public:
     cv::Mat getStageOutput(int scale, int k);
     void init(cv::Mat lon, cv::Mat loff, cv::Mat rg, cv::Mat gr, cv::Mat by, cv::Mat yb); //output of previous stage
+    void init(const std::map<OPPONENT, cv::Mat> & in);
 
 private:
     float const A1 = 10.0;

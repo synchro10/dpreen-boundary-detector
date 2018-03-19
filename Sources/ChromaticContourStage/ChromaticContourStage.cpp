@@ -5,6 +5,7 @@
 #include <opencv2/imgproc.hpp>
 #include <iostream>
 #include <opencv/cv.hpp>
+#include <map>
 #include "ChromaticContourStage.h"
 
 ChromaticContourStage::ChromaticContourStage() {
@@ -120,6 +121,15 @@ void ChromaticContourStage::init(cv::Mat lon, cv::Mat loff, cv::Mat rg, cv::Mat 
     this->gr = gr;
     this->by = by;
     this->yb = yb;
+}
+
+void ChromaticContourStage::init(const std::map<OPPONENT, cv::Mat> & in) {
+    this->lon = in.at(ON);
+    this->loff = in.at(OFF);
+    this->rg = in.at(RG);
+    this->gr = in.at(GR);
+    this->by = in.at(BY);
+    this->yb = in.at(YB);
 }
 
 int ChromaticContourStage::getREoutout() {

@@ -6,27 +6,35 @@
 #define DPREEN_SEGMENTATION_ARCHITECTURE_H
 
 
-#include "IArchitecture.h"
+#include "IModel.h"
 #include "../OpponentColorStage/OpponentColorStage.h"
 #include "../ChromaticContourStage/ChromaticContourStage.h"
 #include "../CompetitiveCooperativeStage/CompetitiveCooperativeStage.h"
 
-class Architecture : public IArchitecture{
+#define SCALE 1
+//#define EPS 0.0001
+
+class Model : public IModel{
 public:
-    Architecture();
+    Model();
 
     const cv::Mat & GetReOut() override;
-    const cv::Mat & GetOCOut(OPPONENT) override;
+    const std::map<OPPONENT, cv::Mat> & GetOCOut(OPPONENT) override;
 
     void init(cv::Mat & sourceImg);
+    cv::Mat GetResult();
 
 private:
+    cv::Mat src;
+    cv::Mat out;
+
     OpponentColorStage Retina;
     ChromaticContourStage V1;
     CompetitiveCooperativeStage V2;
-
     //todo
     //RegionEnhancementStage V4;
+
+    void Process();
 };
 
 

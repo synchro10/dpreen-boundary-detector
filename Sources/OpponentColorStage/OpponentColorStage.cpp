@@ -47,7 +47,7 @@ cv::Mat OpponentColorStage::getResult(cv::Mat srcL, cv::Mat srcM) {
     cv::Mat resultImage;
     resultImage = (B*EIfilteredL - C*IEfilteredM) / (A + EIfilteredL + IEfilteredM);
 
-    return resultImage;
+    return std::move(resultImage);
 }
 
 cv::Mat OpponentColorStage::getLuminanceOFF() {
@@ -58,7 +58,7 @@ cv::Mat OpponentColorStage::getLuminanceOFF() {
     cv::Mat resultImage;
     resultImage = (B*EIfilteredL - C*IEfilteredM) / (A + EIfilteredL + IEfilteredM);
 
-    return resultImage;
+    return std::move(resultImage);
 }
 
 
@@ -88,4 +88,15 @@ cv::Mat OpponentColorStage::getEKernel() {
 
 cv::Mat OpponentColorStage::getIKernel() {
     return cv::getGaussianKernel(kernelSize, sigmaI);
+}
+
+std::map<OPPONENT, cv::Mat> OpponentColorStage::GetOutput() {
+    std::map<OPPONENT, cv::Mat> v;
+    v[RG] = getDRG();
+    v[GR] = getDGR();
+    v[BY] = getDBY();
+    v[YB] = getDYB();
+    v[ON] = getLuminanceON();
+    v[OFF] = getLuminanceOFF();
+    return std::move(v);
 }

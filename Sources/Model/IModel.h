@@ -6,6 +6,7 @@
 #define DPREEN_SEGMENTATION_IARCHITECTURE_H
 
 #include <opencv2/core/mat.hpp>
+#include <map>
 
 /**
  * 6 оппонентов
@@ -18,10 +19,10 @@ enum OPPONENT{
  * тут интерфейс (для разрешения цикл. зависимости)
  * который предоставит общение между слоями
  */
-class IArchitecture {
+class IModel {
 public:
     virtual const cv::Mat & GetReOut() = 0;
-    virtual const cv::Mat & GetOCOut(OPPONENT) = 0;
+    virtual const std::map<OPPONENT, cv::Mat> & GetOCOut(OPPONENT) = 0;
 };
 
 
