@@ -8,16 +8,15 @@
 
 #include <opencv2/core/mat.hpp>
 #include "../Model/IModel.h"
+#include "../GlobalConstants.h"
+#include <vector>
 
-#define MAX_SCALE 3
-#define MAX_K 6
 #define KERNEL_SIZE 3
-#define PI 3.1416
 
 class ChromaticContourStage {
 
 public:
-    cv::Mat getStageOutput(int scale, int k);
+    std::vector<cv::Mat> getStageOutput(int scale);
     void init(cv::Mat lon, cv::Mat loff, cv::Mat rg, cv::Mat gr, cv::Mat by, cv::Mat yb); //output of previous stage
     void init(const std::map<OPPONENT, cv::Mat> & in);
 
@@ -41,7 +40,7 @@ private:
 
 
     float getFrequency(int scale);
-    float getSigma(int scale);
+    double getSigma(int scale);
     cv::Mat getSimpleCellActivity(cv::Mat src, cv::Mat filter);
     cv::Mat getSimpleCellE(cv::Mat src, int scale, int k);
     cv::Mat getSimpleCellF(cv::Mat src, int scale, int k);

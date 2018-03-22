@@ -4,13 +4,30 @@
 
 #include <opencv2/imgproc.hpp>
 #include "CompetitiveCooperativeStage.h"
+#include <vector>
+#include "../Utility/Util.h"
 
 CompetitiveCooperativeStage::CompetitiveCooperativeStage() {
 
 }
 
-cv::Mat CompetitiveCooperativeStage::getStageOutput(int scale) {
-    return cv::Mat();
+std::vector<cv::Mat> CompetitiveCooperativeStage::getStageOutput(int scale) {
+    calcCFOutput(scale);
+    calcCFOutput(scale);
+    int iterations = 1;
+    bool isStop;
+    do {
+        calcCFOutput(scale);
+        calcCFOutput(scale);
+        isStop = true;
+        for(int i = 0; i < MAX_K; i++){
+            isStop &= Util::matLessScalar(cv::abs(U[i] - Uold[i]), eps);
+        }
+        ++iterations;
+    } while(!isStop);
+    std::cout << "iterations in V2 stage: " << iterations << std::endl;
+    //std::cout << cv::abs(U[0] - Uold[0]) << std::endl;
+    return U;
 }
 
 /*
@@ -26,7 +43,6 @@ cv::Mat CompetitiveCooperativeStage::getBipKernel(float k, float kl, float dc) {
     const auto y_mid = (bipKernelSize-1) / 2.0;
     const auto x_mid = (bipKernelSize-1) / 2.0;
 
-    float tau = 1.2;
     double angle = CV_PI / 6 * k;
 
 /*    const auto x_spread = 1. / (pow(sigma, 2)*2);
@@ -92,9 +108,7 @@ cv::Mat CompetitiveCooperativeStage::getGaussianKernel(float r, float tau, float
             gauss[i][j] = std::exp(-std::pow(x, 2) * x_spread
                                    -std::pow(y/tau,2) * y_spread);
         }
-
     }
-
 
     for (auto i = 0;  i < gaussianKernelSize;  ++i) {
         for (auto j = 0; j < gaussianKernelSize; ++j) {
@@ -107,6 +121,59 @@ cv::Mat CompetitiveCooperativeStage::getGaussianKernel(float r, float tau, float
     warpAffine(gaussianKernel, gaussianKernel, rot_mat, gaussianKernel.size());
 
     return gaussianKernel;
+}
+
+void CompetitiveCooperativeStage::calcCFOutput(const int scale) {
+    Uold.swap(U);
+    std::vector<cv::Mat> JU;
+    for(int i = 0; i < MAX_K; i++){
+        cv::Mat tmp;
+        cv::Mat jFilter = getGaussianKernel(i, tauJ, sigmaI[scale]);
+        cv::filter2D(Uold[i], tmp, Uold[i].depth(), jFilter);
+        JU.push_back(std::move(tmp));
+    }
+
+    for (int i = 0; i < MAX_K; ++i){
+        cv::Mat u = Kh * H[i] + Kf * F[i];
+
+        cv::Mat GU;
+        cv::Mat gFilter = getGaussianKernel(0.0f, tauG, sigmaU[scale]);
+        cv::filter2D(Uold[i], GU, Uold[i].depth(), gFilter);
+
+        cv::Mat summ = cv::Mat(JU[0].rows, JU[0].cols, JU[0].type(), 0.f);
+        for(int j = 0; j < MAX_K; ++j) {
+            if (j == i)
+                continue;
+            summ += JU[j];
+        }
+
+        U[i] = (u - Ci * summ - Cc * GU) / (A4 + u + summ + GU);
+        cv::threshold(U[i], U[i], 0.0, 255, cv::THRESH_TOZERO);
+    }
+}
+
+void CompetitiveCooperativeStage::calcCSOutput(const int scale) {
+    for(int i = 0; i < MAX_K; ++i){
+        cv::Mat PU, NU, zPU, zNU;
+        cv::Mat pFilter = getBipKernel(i, Kl[scale], Dc[scale]);
+        cv::Mat nFilter = getBipKernel(i, Kl[scale], (-1.f)*Dc[scale]);
+        cv::filter2D(U[i], PU, U[i].depth(), pFilter);
+        cv::filter2D(U[i], NU, U[i].depth(), nFilter);
+
+        cv::max(PU - alpha, 0.0, zPU);
+        cv::max(NU - alpha, 0.0, zNU);
+
+        F[i] = zPU.mul(zNU) / (A5 + PU.mul(NU));
+    }
+}
+
+void CompetitiveCooperativeStage::init(std::vector<cv::Mat> H) {
+    for(int i = 0; i < MAX_K; i++){
+        U[i] = cv::Mat(H[0].rows, H[0].cols, H[0].type(), 0.f);
+        Uold[i] = cv::Mat(H[0].rows, H[0].cols, H[0].type(), 0.f);
+        F[i] = cv::Mat(H[0].rows, H[0].cols, H[0].type(), 0.f);
+    }
+    this->H = std::move(H);
 }
 
 

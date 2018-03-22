@@ -10,6 +10,7 @@
 #include "../OpponentColorStage/OpponentColorStage.h"
 #include "../ChromaticContourStage/ChromaticContourStage.h"
 #include "../CompetitiveCooperativeStage/CompetitiveCooperativeStage.h"
+#include "../GlobalConstants.h"
 
 #define SCALE 1
 //#define EPS 0.0001

@@ -32,24 +32,26 @@ float ChromaticContourStage::getFrequency(int scale) {
 
     switch(scale){
         case 0:
-            return 0.15;
+            return 0.15f;
         case 1:
-            return 0.07;
+            return 0.07f;
         case 2:
-            return 0.03;
+            return 0.03f;
+        default:
+            return 0.f;
     }
 }
 
-float ChromaticContourStage::getSigma(int scale) {
+double ChromaticContourStage::getSigma(int scale) {
     return std::pow(2, scale);
 }
 
 cv::Mat ChromaticContourStage::getSimpleCellE(cv::Mat src, int scale, int k) {
-    return getSimpleCellActivity(src, evenGaborFilters[scale][k]);
+    return getSimpleCellActivity(std::move(src), evenGaborFilters[scale][k]);
 }
 
 cv::Mat ChromaticContourStage::getSimpleCellF(cv::Mat src, int scale, int k) {
-    return getSimpleCellActivity(src, oddGaborFilters[scale][k]);
+    return getSimpleCellActivity(std::move(src), oddGaborFilters[scale][k]);
 }
 
 cv::Mat ChromaticContourStage::getSimpleCellActivity(cv::Mat src, cv::Mat filter) {
@@ -108,19 +110,17 @@ cv::Mat ChromaticContourStage::getHOutput(int scale, int k) {
     cv::threshold(fYB, fYB, 0.0, 255, cv::THRESH_TOZERO);
 
     cv::Mat result;
-    result = (eLOFF + fLOFF + eLON + fLON + eRG + fRG + eGR + fGR + eBY + fBY + eYB + fYB) + beta * getREoutout();
+    result = alpha * (eLOFF + fLOFF + eLON + fLON + eRG + fRG + eGR + fGR + eBY + fBY + eYB + fYB) + beta * getREoutout();
     return result;
-
-
 }
 
 void ChromaticContourStage::init(cv::Mat lon, cv::Mat loff, cv::Mat rg, cv::Mat gr, cv::Mat by, cv::Mat yb) {
-    this->lon = lon;
-    this->loff = loff;
-    this->rg = rg;
-    this->gr = gr;
-    this->by = by;
-    this->yb = yb;
+    this->lon = std::move(lon);
+    this->loff = std::move(loff);
+    this->rg = std::move(rg);
+    this->gr = std::move(gr);
+    this->by = std::move(by);
+    this->yb = std::move(yb);
 }
 
 void ChromaticContourStage::init(const std::map<OPPONENT, cv::Mat> & in) {
@@ -137,24 +137,29 @@ int ChromaticContourStage::getREoutout() {
     return 1;
 }
 
-cv::Mat ChromaticContourStage::getStageOutput(int scale, int k) {
-    cv::Mat hOutput = getHOutput(scale, k);
-/*    cv::imshow( "Display h", hOutput);                   // Show our image inside it.
-    cv::waitKey(0);*/
-    cv::Mat filter = getDifferenceGaussFilter(k);
-    cv::Mat filtered;
-    cv::filter2D(hOutput,filtered, hOutput.depth(), filter);
-    cv::Mat result;
+std::vector<cv::Mat> ChromaticContourStage::getStageOutput(int scale) {
+    std::vector<cv::Mat> out;
+    for (int i = 0; i < MAX_K; i++)
+    {
+        cv::Mat hOutput = getHOutput(scale, i);
+    /*    cv::imshow( "Display h", hOutput);                   // Show our image inside it.
+        cv::waitKey(0);*/
+        cv::Mat filter = getDifferenceGaussFilter(i);
+        cv::Mat filtered;
+        cv::filter2D(hOutput,filtered, hOutput.depth(), filter);
+        cv::Mat result;
 
-    result = (hOutput - kLambda * filtered) / (A3 + hOutput - filtered);
-    //cv::threshold(result, result, 0.0, 255, cv::THRESH_TOZERO);
-    return result;
+        result = (hOutput - kLambda * filtered) / (A3 + hOutput - filtered);
+        //cv::threshold(result, result, 0.0, 255, cv::THRESH_TOZERO);
+        out.push_back(std::move(result));
+    }
+    return std::move(out);
 
 }
 
 cv::Mat ChromaticContourStage::getDifferenceGaussFilter(int k) {
-    float sigmaE = std::pow(2, k);
-    float sigmaI = 2 * sigmaE;
+    double sigmaE = std::pow(2, k);
+    double sigmaI = 2 * sigmaE;
 
     cv::Mat kernelE, kernelI;
     kernelE = cv::getGaussianKernel(3, sigmaE);

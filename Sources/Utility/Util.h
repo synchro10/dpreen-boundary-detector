@@ -12,6 +12,9 @@ class Util {
 public:
     static void printMat(const cv::Mat &mat);
     static void logMat(const cv::Mat & img, const std::string & name);
+    static bool matLessScalar(const cv::Mat & mat, const double scalar);
+    static cv::Mat perElementMax(std::initializer_list<cv::Mat> list);
+    static cv::Mat perElementMax(const std::vector<cv::Mat> & list);
 };
 
 
