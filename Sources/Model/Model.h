@@ -20,7 +20,7 @@ public:
     Model();
 
     const cv::Mat & GetReOut() override;
-    const std::map<OPPONENT, cv::Mat> & GetOCOut(OPPONENT) override;
+    const std::map<OPPONENT, cv::Mat> & GetOCOut() override;
 
     void init(cv::Mat & sourceImg);
     cv::Mat GetResult();

@@ -7,7 +7,7 @@
 void Util::printMat(const cv::Mat &mat) {
     normalize(mat, mat, 255, 0);
     imshow( "Display mat", mat);                   // Show our image inside it.
-    //waitKey(0);
+    cv::waitKey(0);
 }
 
 void Util::logMat(const cv::Mat &img, const std::string &name) {

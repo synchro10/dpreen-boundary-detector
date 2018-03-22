@@ -22,7 +22,7 @@ enum OPPONENT{
 class IModel {
 public:
     virtual const cv::Mat & GetReOut() = 0;
-    virtual const std::map<OPPONENT, cv::Mat> & GetOCOut(OPPONENT) = 0;
+    virtual const std::map<OPPONENT, cv::Mat> & GetOCOut() = 0;
 };
 
 

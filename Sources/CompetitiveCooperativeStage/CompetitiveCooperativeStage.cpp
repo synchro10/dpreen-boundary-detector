@@ -13,12 +13,12 @@ CompetitiveCooperativeStage::CompetitiveCooperativeStage() {
 
 std::vector<cv::Mat> CompetitiveCooperativeStage::getStageOutput(int scale) {
     calcCFOutput(scale);
-    calcCFOutput(scale);
+    calcCSOutput(scale);
     int iterations = 1;
     bool isStop;
     do {
         calcCFOutput(scale);
-        calcCFOutput(scale);
+        calcCSOutput(scale);
         isStop = true;
         for(int i = 0; i < MAX_K; i++){
             isStop &= Util::matLessScalar(cv::abs(U[i] - Uold[i]), eps);
@@ -68,13 +68,14 @@ cv::Mat CompetitiveCooperativeStage::getBipKernel(float k, float kl, float dc) {
 
     }
 
-    float denominator = cv::norm(kernel, cv::NORM_L1);
-
     for (auto i = 0;  i < bipKernelSize;  ++i) {
         for (auto j = 0; j < bipKernelSize; ++j) {
-            kernel.at<float>(j, i) = static_cast<float>(bip[i][j] / denominator);
+            kernel.at<float>(j, i) = static_cast<float>(bip[i][j]);
         }
     }
+
+    float denominator = cv::norm(kernel, cv::NORM_L1);
+    kernel = kernel / denominator;
 
     return kernel;
 }
@@ -163,13 +164,20 @@ void CompetitiveCooperativeStage::calcCSOutput(const int scale) {
         cv::max(PU - alpha, 0.0, zPU);
         cv::max(NU - alpha, 0.0, zNU);
 
+        std::cout << U[i] << std::endl;
+        std::cout << pFilter << std::endl;
+        std::cout << nFilter << std::endl;
+        std::cout << PU << std::endl;
+        std::cout << NU << std::endl;
         F[i] = zPU.mul(zNU) / (A5 + PU.mul(NU));
     }
+    std::cout << F[0] << std::endl;
 }
 
 void CompetitiveCooperativeStage::init(std::vector<cv::Mat> H) {
     for(int i = 0; i < MAX_K; i++){
         U[i] = cv::Mat(H[0].rows, H[0].cols, H[0].type(), 0.f);
+        U[i].depth();
         Uold[i] = cv::Mat(H[0].rows, H[0].cols, H[0].type(), 0.f);
         F[i] = cv::Mat(H[0].rows, H[0].cols, H[0].type(), 0.f);
     }

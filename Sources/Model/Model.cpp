@@ -18,7 +18,7 @@ const cv::Mat & Model::GetReOut() {
     return cv::Mat();
 }
 
-const std::map<OPPONENT, cv::Mat> & Model::GetOCOut(OPPONENT) {
+const std::map<OPPONENT, cv::Mat> & Model::GetOCOut() {
     return Retina.GetOutput();
 }
 
@@ -48,7 +48,8 @@ void Model::Process() {
     std::vector<cv::Mat> v2Out = V2.getStageOutput(SCALE);
 
     //tmp
-    out = Util::perElementMax(v2Out);
+    out = Util::perElementMax(ccsOut);
+    //out = v2Out[5];
 
     //V4 - Region enhancement stage (4.4)
 
