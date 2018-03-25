@@ -100,3 +100,11 @@ std::map<OPPONENT, cv::Mat> OpponentColorStage::GetOutput() {
     v[OFF] = getLuminanceOFF();
     return std::move(v);
 }
+
+const cv::Mat OpponentColorStage::getKernelEI() {
+    return kernelEI;
+}
+
+const cv::Mat OpponentColorStage::getKernelIE() {
+    return kernelIE;
+}

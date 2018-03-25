@@ -8,15 +8,16 @@
 #include <map>
 #include "ChromaticContourStage.h"
 
-ChromaticContourStage::ChromaticContourStage() {
+ChromaticContourStage::ChromaticContourStage(std::shared_ptr<IModel> model) {
+    this->model = model;
     for(int s = 0; s < MAX_SCALE; s++){
         std::vector<cv::Mat> evenFilters;
         std::vector<cv::Mat> oddFilters;
 
         for(int k = 0; k < MAX_K; k++){
 
-            evenFilters.push_back(cv::getGaborKernel(cv::Size(KERNEL_SIZE, KERNEL_SIZE), getSigma(s), (k+1) * 30, lambda, gamma, 0., CV_32FC1));
-            oddFilters.push_back(cv::getGaborKernel(cv::Size(KERNEL_SIZE, KERNEL_SIZE), getSigma(s), (k+1) * 30, lambda, gamma, CV_PI/2., CV_32FC1));
+            evenFilters.push_back(cv::getGaborKernel(cv::Size(KERNEL_SIZE, KERNEL_SIZE), getSigma(s), CV_PI / 6 * k, lambda, gamma, 0., CV_32FC1));
+            oddFilters.push_back(cv::getGaborKernel(cv::Size(KERNEL_SIZE, KERNEL_SIZE), getSigma(s), CV_PI / 6 * k, lambda, gamma, CV_PI/2., CV_32FC1));
 
         }
 

@@ -10,20 +10,24 @@
 #include "../Model/IModel.h"
 #include "../GlobalConstants.h"
 #include <vector>
+#include <memory>
 
 #define KERNEL_SIZE 3
 
 class ChromaticContourStage {
 
 public:
+    ChromaticContourStage(std::shared_ptr<IModel> model);
     std::vector<cv::Mat> getStageOutput(int scale);
     void init(cv::Mat lon, cv::Mat loff, cv::Mat rg, cv::Mat gr, cv::Mat by, cv::Mat yb); //output of previous stage
     void init(const std::map<OPPONENT, cv::Mat> & in);
 
 private:
+    std::shared_ptr<IModel> model;
+
     float const A1 = 10.0;
     float const A3 = 1.0;
-    float const lambda = 1.2;
+    float const lambda = 2.0;
     float const gamma = 0.5;
     float const alpha = 1.0;
     float const beta = 0.5;
@@ -47,10 +51,6 @@ private:
     int getREoutout();
     cv::Mat getHOutput(int scale, int k); //according to 8
     cv::Mat getDifferenceGaussFilter(int k);
-
-public:
-    ChromaticContourStage();
-
 
 };
 

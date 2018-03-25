@@ -164,20 +164,19 @@ void CompetitiveCooperativeStage::calcCSOutput(const int scale) {
         cv::max(PU - alpha, 0.0, zPU);
         cv::max(NU - alpha, 0.0, zNU);
 
-        std::cout << U[i] << std::endl;
-        std::cout << pFilter << std::endl;
-        std::cout << nFilter << std::endl;
-        std::cout << PU << std::endl;
-        std::cout << NU << std::endl;
+//        std::cout << U[i] << std::endl;
+//        std::cout << pFilter << std::endl;
+//        std::cout << nFilter << std::endl;
+//        std::cout << zPU << std::endl;
+//        std::cout << zNU << std::endl;
         F[i] = zPU.mul(zNU) / (A5 + PU.mul(NU));
     }
-    std::cout << F[0] << std::endl;
+    //std::cout << F[0] << std::endl;
 }
 
 void CompetitiveCooperativeStage::init(std::vector<cv::Mat> H) {
     for(int i = 0; i < MAX_K; i++){
         U[i] = cv::Mat(H[0].rows, H[0].cols, H[0].type(), 0.f);
-        U[i].depth();
         Uold[i] = cv::Mat(H[0].rows, H[0].cols, H[0].type(), 0.f);
         F[i] = cv::Mat(H[0].rows, H[0].cols, H[0].type(), 0.f);
     }

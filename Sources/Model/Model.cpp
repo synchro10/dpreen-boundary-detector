@@ -4,11 +4,13 @@
 
 #include "Model.h"
 #include "../Utility/Util.h"
+#include <memory>
 
 Model::Model() :
     Retina(OpponentColorStage(SCALE)),
-    V1(ChromaticContourStage()),
-    V2(CompetitiveCooperativeStage())
+    V1(ChromaticContourStage(shared_from_this())),
+    V2(CompetitiveCooperativeStage()),
+    V4(RegionEnhancementStage(shared_from_this()))
 {
 
 }
@@ -47,10 +49,20 @@ void Model::Process() {
     V2.init(ccsOut);
     std::vector<cv::Mat> v2Out = V2.getStageOutput(SCALE);
 
-    //tmp
-    out = Util::perElementMax(ccsOut);
-    //out = v2Out[5];
-
     //V4 - Region enhancement stage (4.4)
+    V4.init(v2Out);
+    std::map<OPPONENT, cv::Mat> v4Out = V4.getStageOut(SCALE);
 
+    //tmp
+    out = Util::perElementMax(v2Out);
+    //out = v2Out[3];
+
+}
+
+const cv::Mat Model::getKernelEI() {
+    return cv::Mat();
+}
+
+const cv::Mat Model::getKernelIE() {
+    return cv::Mat();
 }

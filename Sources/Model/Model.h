@@ -11,6 +11,7 @@
 #include "../ChromaticContourStage/ChromaticContourStage.h"
 #include "../CompetitiveCooperativeStage/CompetitiveCooperativeStage.h"
 #include "../GlobalConstants.h"
+#include "../RegionEnhancementStage/RegionEnhancementStage.h"
 
 #define SCALE 1
 //#define EPS 0.0001
@@ -21,6 +22,8 @@ public:
 
     const cv::Mat & GetReOut() override;
     const std::map<OPPONENT, cv::Mat> & GetOCOut() override;
+    const cv::Mat getKernelEI() override;
+    const cv::Mat getKernelIE() override ;
 
     void init(cv::Mat & sourceImg);
     cv::Mat GetResult();
@@ -32,8 +35,7 @@ private:
     OpponentColorStage Retina;
     ChromaticContourStage V1;
     CompetitiveCooperativeStage V2;
-    //todo
-    //RegionEnhancementStage V4;
+    RegionEnhancementStage V4;
 
     void Process();
 };

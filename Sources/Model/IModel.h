@@ -7,6 +7,7 @@
 
 #include <opencv2/core/mat.hpp>
 #include <map>
+#include <memory>
 
 /**
  * 6 оппонентов
@@ -19,10 +20,12 @@ enum OPPONENT{
  * тут интерфейс (для разрешения цикл. зависимости)
  * который предоставит общение между слоями
  */
-class IModel {
+class IModel : public std::enable_shared_from_this<IModel> {
 public:
     virtual const cv::Mat & GetReOut() = 0;
     virtual const std::map<OPPONENT, cv::Mat> & GetOCOut() = 0;
+    virtual const cv::Mat getKernelEI() = 0;
+    virtual const cv::Mat getKernelIE() = 0;
 };
 
 
