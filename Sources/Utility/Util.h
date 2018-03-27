@@ -15,6 +15,7 @@ public:
     static bool matLessScalar(const cv::Mat & mat, const double scalar);
     static cv::Mat perElementMax(std::initializer_list<cv::Mat> list);
     static cv::Mat perElementMax(const std::vector<cv::Mat> & list);
+    static void normalize(cv::Mat &src, double low, double high);
 };
 
 

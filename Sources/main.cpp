@@ -8,7 +8,7 @@ using namespace std;
 
 int main() {
 
-    Mat img = imread( "../pictures/1.jpg", CV_LOAD_IMAGE_COLOR);
+    Mat img = imread( "../pictures/113044.jpg", CV_LOAD_IMAGE_COLOR);
     if(! img.data )                              // Check for invalid input
     {
         cout <<  "Could not open or find the image" << std::endl ;

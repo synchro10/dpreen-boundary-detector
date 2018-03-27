@@ -117,7 +117,7 @@ cv::Mat ChromaticContourStage::getHOutput(int scale, int k) {
     if (iteration != 0){
         result = result + beta * getREout(scale, k);
     } else {
-        result = result + beta * 1.0f;
+        result = result + beta * 0.0f;
     }
     return std::move(result);
 }

@@ -6,7 +6,7 @@
 
 void Util::printMat(const cv::Mat &mat, const std::string & name) {
     cv::Mat tmp;
-    normalize(mat, tmp, 255, 0);
+    cv::normalize(mat, tmp, 255, 0);
     imshow(name, tmp);                   // Show our image inside it.
     cv::waitKey(0);
 }
@@ -45,4 +45,8 @@ cv::Mat Util::perElementMax(const std::vector<cv::Mat> & list) {
         cv::max(max, elem, max);
     }
     return std::move(max);
+}
+
+void Util::normalize(cv::Mat &src, double low, double high) {
+    cv::normalize(src, src, low, high);
 }

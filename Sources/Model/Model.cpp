@@ -44,7 +44,7 @@ void Model::Process() {
     int iterations = 1;
     bool isStop;
     const OPPONENT ch[4] = {OPPONENT::RG, OPPONENT::GR, OPPONENT::YB, OPPONENT::BY};
-    while(!isStop && iterations != 28) {
+    while(!isStop && iterations != 18) {
         v4Out.swap(v4OutOld);
         Iteration();
         isStop = true;
@@ -79,6 +79,10 @@ void Model::Iteration() {
     //V1 - Chromatic contour stage (4.2)
     V1.init(retinaOut, this);
     v1Out = V1.getStageOutput(SCALE);
+
+    for (auto & src : v1Out){
+        Util::normalize(src, 100.0, 0.0);
+    }
 
     //V2 - Competitive cooperative stage (4.3)
     V2.init(v1Out);
