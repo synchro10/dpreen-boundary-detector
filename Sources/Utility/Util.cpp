@@ -51,18 +51,15 @@ void Util::normalize(cv::Mat &src, double low, double high) {
     cv::normalize(src, src, low, high);
 }
 
-void Util::saveImg(const cv::Mat &src, const std::string &name) {
-    cv::Mat tmp;
+void Util::saveImg(const cv::Mat &src, const std::string &name, const int iteration, const std::string &stage) {
+    cv::Mat tmp = src;
     cv::normalize(src, tmp, 255.0, 0.0);
-  //  tmp.convertTo(tmp, CV_8U);
-    cv::Mat tmp2 = tmp;
-    cv::Mat tmp3 = tmp;
-    std::vector<cv::Mat> splitedImg;
-    splitedImg.emplace_back(tmp);
-    splitedImg.emplace_back(tmp2);
-
-    splitedImg.emplace_back(tmp3);
-
-    cv::merge(splitedImg, tmp);
-    cv::imwrite("../pictures/" + name + ".jpg", tmp);
+    tmp.convertTo(tmp, CV_8UC4, 255.0, 0.0);
+    std::string fileName;
+    if (stage != "result"){
+        fileName = "../pictures/" + stage + "/" + std::to_string(iteration) + "_iter_" + name + ".jpg";
+    } else {
+        fileName = "../pictures/" + name + ".jpg";
+    }
+    cv::imwrite(fileName, tmp);
 }

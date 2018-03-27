@@ -40,13 +40,13 @@ cv::Mat Model::GetResult() {
 }
 
 void Model::Process() {
-    Iteration();
+    Iteration(0);
     int iterations = 1;
     bool isStop;
     const OPPONENT ch[4] = {OPPONENT::RG, OPPONENT::GR, OPPONENT::YB, OPPONENT::BY};
-    while(!isStop && iterations != 18) {
+    while(!isStop && iterations != 10) {
         v4Out.swap(v4OutOld);
-        Iteration();
+        Iteration(iterations);
         isStop = true;
         for(int i = 0; i < 4; i++){
             isStop &= Util::matLessScalar(cv::abs(v4Out[ch[i]] - v4OutOld[ch[i]]), 0.0001);
@@ -55,23 +55,13 @@ void Model::Process() {
     }
     std::cout << "iterations total: " << iterations << std::endl;
 
-    for(int i = 0; i < 6; i++){
-        Util::printMat(v2Out[i], "v2 " + std::to_string(i));
-    }
-    {
-        Util::printMat(v4Out[OPPONENT::RG], "v4 RG");
-        Util::printMat(v4Out[OPPONENT::GR], "v4 GR");
-        Util::printMat(v4Out[OPPONENT::YB], "v4 YB");
-        Util::printMat(v4Out[OPPONENT::BY], "v4 BY");
-    }
-
     //tmp
     //out = Util::perElementMax(v2Out);
     out = v4Out[OPPONENT::RG];
 
 }
 
-void Model::Iteration() {
+void Model::Iteration(const int iteration) {
     //Retina - Opponent color stage (4.1)
     Retina.init(src);
     retinaOut = Retina.GetOutput();
@@ -81,16 +71,44 @@ void Model::Iteration() {
     v1Out = V1.getStageOutput(SCALE);
 
     for (auto & src : v1Out){
-        Util::normalize(src, 100.0, 0.0);
+        //todo
+        Util::normalize(src, 255.0, 0.0);
     }
 
     //V2 - Competitive cooperative stage (4.3)
     V2.init(v1Out);
     v2Out = V2.getStageOutput(SCALE);
 
+    for (auto & src : v2Out){
+        //todo
+        Util::normalize(src, 255.0, 0.0);
+    }
+
     //V4 - Region enhancement stage (4.4)
     V4.init(v2Out, SCALE, this);
     v4Out = V4.getStageOut();
+
+
+#ifdef LOGGER
+    {
+        Util::saveImg(retinaOut[OPPONENT::RG], "RG", iteration, "retina");
+        Util::saveImg(retinaOut[OPPONENT::GR], "GR", iteration, "retina");
+        Util::saveImg(retinaOut[OPPONENT::YB], "YB", iteration, "retina");
+        Util::saveImg(retinaOut[OPPONENT::BY], "BY", iteration, "retina");
+    }
+    for(int i = 0; i < 6; i++){
+        Util::saveImg(v1Out[i], std::to_string(i), iteration, "v1");
+    }
+    for(int i = 0; i < 6; i++){
+        Util::saveImg(v2Out[i], std::to_string(i), iteration, "v2");
+    }
+    {
+        Util::saveImg(v4Out[OPPONENT::RG], "RG", iteration, "v4");
+        Util::saveImg(v4Out[OPPONENT::GR], "GR", iteration, "v4");
+        Util::saveImg(v4Out[OPPONENT::YB], "YB", iteration, "v4");
+        Util::saveImg(v4Out[OPPONENT::BY], "BY", iteration, "v4");
+    }
+#endif
 }
 
 const cv::Mat & Model::getKernelEI() {

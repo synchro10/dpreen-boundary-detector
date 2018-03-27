@@ -16,6 +16,8 @@
 #define SCALE 1
 //#define EPS 0.0001
 
+#define LOGGER
+
 class Model : public IModel{
 public:
     Model();
@@ -44,7 +46,7 @@ private:
     std::map<OPPONENT, cv::Mat> v4OutOld;
 
     void Process();
-    void Iteration();
+    void Iteration(const int iteration);
 };
 
 

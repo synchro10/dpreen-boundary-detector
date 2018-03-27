@@ -115,7 +115,8 @@ cv::Mat ChromaticContourStage::getHOutput(int scale, int k) {
     cv::Mat result;
     result = alpha * (eLOFF + fLOFF + eLON + fLON + eRG + fRG + eGR + fGR + eBY + fBY + eYB + fYB);
     if (iteration != 0){
-        result = result + beta * getREout(scale, k);
+        const cv::Mat & reOut = getREout(scale, k);
+        result = result + beta * reOut;
     } else {
         result = result + beta * 0.0f;
     }
