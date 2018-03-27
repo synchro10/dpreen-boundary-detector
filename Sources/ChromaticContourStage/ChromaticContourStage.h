@@ -17,13 +17,16 @@
 class ChromaticContourStage {
 
 public:
-    ChromaticContourStage(std::shared_ptr<IModel> model);
+    ChromaticContourStage();
     std::vector<cv::Mat> getStageOutput(int scale);
     void init(cv::Mat lon, cv::Mat loff, cv::Mat rg, cv::Mat gr, cv::Mat by, cv::Mat yb); //output of previous stage
-    void init(const std::map<OPPONENT, cv::Mat> & in);
+    void init(const std::map<OPPONENT, cv::Mat> &in, IModel *model);
+
+    //kostil'
+    static int iteration;
 
 private:
-    std::shared_ptr<IModel> model;
+    IModel* model;
 
     float const A1 = 10.0;
     float const A3 = 1.0;
@@ -32,7 +35,6 @@ private:
     float const alpha = 1.0;
     float const beta = 0.5;
     float const kLambda = 0.5;
-
 
     cv::Mat lon, loff, rg, gr, by, yb;
 
@@ -48,7 +50,7 @@ private:
     cv::Mat getSimpleCellActivity(cv::Mat src, cv::Mat filter);
     cv::Mat getSimpleCellE(cv::Mat src, int scale, int k);
     cv::Mat getSimpleCellF(cv::Mat src, int scale, int k);
-    int getREoutout();
+    cv::Mat getREout(int scale, int k);
     cv::Mat getHOutput(int scale, int k); //according to 8
     cv::Mat getDifferenceGaussFilter(int k);
 

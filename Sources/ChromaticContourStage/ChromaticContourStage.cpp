@@ -8,8 +8,10 @@
 #include <map>
 #include "ChromaticContourStage.h"
 
-ChromaticContourStage::ChromaticContourStage(std::shared_ptr<IModel> model) {
-    this->model = model;
+int ChromaticContourStage::iteration = 0;
+
+ChromaticContourStage::ChromaticContourStage()
+{
     for(int s = 0; s < MAX_SCALE; s++){
         std::vector<cv::Mat> evenFilters;
         std::vector<cv::Mat> oddFilters;
@@ -111,8 +113,13 @@ cv::Mat ChromaticContourStage::getHOutput(int scale, int k) {
     cv::threshold(fYB, fYB, 0.0, 255, cv::THRESH_TOZERO);
 
     cv::Mat result;
-    result = alpha * (eLOFF + fLOFF + eLON + fLON + eRG + fRG + eGR + fGR + eBY + fBY + eYB + fYB) + beta * getREoutout();
-    return result;
+    result = alpha * (eLOFF + fLOFF + eLON + fLON + eRG + fRG + eGR + fGR + eBY + fBY + eYB + fYB);
+    if (iteration != 0){
+        result = result + beta * getREout(scale, k);
+    } else {
+        result = result + beta * 1.0f;
+    }
+    return std::move(result);
 }
 
 void ChromaticContourStage::init(cv::Mat lon, cv::Mat loff, cv::Mat rg, cv::Mat gr, cv::Mat by, cv::Mat yb) {
@@ -122,20 +129,46 @@ void ChromaticContourStage::init(cv::Mat lon, cv::Mat loff, cv::Mat rg, cv::Mat 
     this->gr = std::move(gr);
     this->by = std::move(by);
     this->yb = std::move(yb);
+    iteration = 0;
 }
 
-void ChromaticContourStage::init(const std::map<OPPONENT, cv::Mat> & in) {
+void ChromaticContourStage::init(const std::map<OPPONENT, cv::Mat> &in, IModel *model) {
     this->lon = in.at(ON);
     this->loff = in.at(OFF);
     this->rg = in.at(RG);
     this->gr = in.at(GR);
     this->by = in.at(BY);
     this->yb = in.at(YB);
+    this->model = model;
+    iteration = 0;
 }
 
-int ChromaticContourStage::getREoutout() {
-    //TODO
-    return 1;
+cv::Mat ChromaticContourStage::getREout(int scale, int k) {
+    cv::Mat eRG, eGR, eBY, eYB;
+    cv::Mat fRG, fGR, fBY, fYB;
+
+    std::map<OPPONENT, cv::Mat> reOut = model->GetReOut();
+    eRG = getSimpleCellE(reOut[OPPONENT::RG], scale, k);
+    eGR = getSimpleCellE(reOut[OPPONENT::GR], scale, k);
+    eBY = getSimpleCellE(reOut[OPPONENT::BY], scale, k);
+    eYB = getSimpleCellE(reOut[OPPONENT::YB], scale, k);
+
+    fRG = getSimpleCellF(reOut[OPPONENT::RG], scale, k);
+    fGR = getSimpleCellF(reOut[OPPONENT::GR], scale, k);
+    fBY = getSimpleCellF(reOut[OPPONENT::BY], scale, k);
+    fYB = getSimpleCellF(reOut[OPPONENT::YB], scale, k);
+
+    cv::threshold(eRG, eRG, 0.0, 255, cv::THRESH_TOZERO);
+    cv::threshold(eGR, eGR, 0.0, 255, cv::THRESH_TOZERO);
+    cv::threshold(eBY, eBY, 0.0, 255, cv::THRESH_TOZERO);
+    cv::threshold(eYB, eYB, 0.0, 255, cv::THRESH_TOZERO);
+
+    cv::threshold(fRG, fRG, 0.0, 255, cv::THRESH_TOZERO);
+    cv::threshold(fGR, fGR, 0.0, 255, cv::THRESH_TOZERO);
+    cv::threshold(fBY, fBY, 0.0, 255, cv::THRESH_TOZERO);
+    cv::threshold(fYB, fYB, 0.0, 255, cv::THRESH_TOZERO);
+
+    return std::move(eRG + eGR + eBY + eYB + fRG + fGR + fBY + fYB);
 }
 
 std::vector<cv::Mat> ChromaticContourStage::getStageOutput(int scale) {
@@ -154,6 +187,7 @@ std::vector<cv::Mat> ChromaticContourStage::getStageOutput(int scale) {
         //cv::threshold(result, result, 0.0, 255, cv::THRESH_TOZERO);
         out.push_back(std::move(result));
     }
+    ++iteration;
     return std::move(out);
 
 }

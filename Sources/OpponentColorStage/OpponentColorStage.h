@@ -24,8 +24,8 @@ public:
 
     void init(cv::Mat src);
 
-    const cv::Mat getKernelEI();
-    const cv::Mat getKernelIE();
+    const cv::Mat & getKernelEI();
+    const cv::Mat & getKernelIE();
 
 private:
 

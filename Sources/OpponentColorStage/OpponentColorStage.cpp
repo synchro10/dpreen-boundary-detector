@@ -101,10 +101,10 @@ std::map<OPPONENT, cv::Mat> OpponentColorStage::GetOutput() {
     return std::move(v);
 }
 
-const cv::Mat OpponentColorStage::getKernelEI() {
+const cv::Mat & OpponentColorStage::getKernelEI() {
     return kernelEI;
 }
 
-const cv::Mat OpponentColorStage::getKernelIE() {
+const cv::Mat & OpponentColorStage::getKernelIE() {
     return kernelIE;
 }

@@ -4,9 +4,10 @@
 
 #include "Util.h"
 
-void Util::printMat(const cv::Mat &mat) {
-    normalize(mat, mat, 255, 0);
-    imshow( "Display mat", mat);                   // Show our image inside it.
+void Util::printMat(const cv::Mat &mat, const std::string & name) {
+    cv::Mat tmp;
+    normalize(mat, tmp, 255, 0);
+    imshow(name, tmp);                   // Show our image inside it.
     cv::waitKey(0);
 }
 

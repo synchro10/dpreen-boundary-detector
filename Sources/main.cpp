@@ -19,7 +19,7 @@ int main() {
     model.init(img);
 
     Mat result = model.GetResult();
-    Util::printMat(result);
+    Util::printMat(result, "out");
 
     waitKey(0);
     return 0;
