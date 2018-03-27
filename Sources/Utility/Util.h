@@ -16,6 +16,7 @@ public:
     static cv::Mat perElementMax(std::initializer_list<cv::Mat> list);
     static cv::Mat perElementMax(const std::vector<cv::Mat> & list);
     static void normalize(cv::Mat &src, double low, double high);
+    static void saveImg(const cv::Mat & src, const std::string & name);
 };
 
 

@@ -50,3 +50,19 @@ cv::Mat Util::perElementMax(const std::vector<cv::Mat> & list) {
 void Util::normalize(cv::Mat &src, double low, double high) {
     cv::normalize(src, src, low, high);
 }
+
+void Util::saveImg(const cv::Mat &src, const std::string &name) {
+    cv::Mat tmp;
+    cv::normalize(src, tmp, 255.0, 0.0);
+  //  tmp.convertTo(tmp, CV_8U);
+    cv::Mat tmp2 = tmp;
+    cv::Mat tmp3 = tmp;
+    std::vector<cv::Mat> splitedImg;
+    splitedImg.emplace_back(tmp);
+    splitedImg.emplace_back(tmp2);
+
+    splitedImg.emplace_back(tmp3);
+
+    cv::merge(splitedImg, tmp);
+    cv::imwrite("../pictures/" + name + ".jpg", tmp);
+}

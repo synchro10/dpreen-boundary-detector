@@ -20,6 +20,7 @@ int main() {
 
     Mat result = model.GetResult();
     Util::printMat(result, "out");
+    Util::saveImg(result, "result");
 
     waitKey(0);
     return 0;
