@@ -1,0 +1,3 @@
+/home/akondratev/kondrat/diplom/dpreen-boundary-detector/cmake-build-debug/CMakeFiles/rebuild_cache.dir
+/home/akondratev/kondrat/diplom/dpreen-boundary-detector/cmake-build-debug/CMakeFiles/edit_cache.dir
+/home/akondratev/kondrat/diplom/dpreen-boundary-detector/cmake-build-debug/CMakeFiles/dpreen_segmentation.dir
