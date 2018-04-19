@@ -4,7 +4,6 @@
 
 #include "Model.h"
 #include "../Utility/Util.h"
-#include <memory>
 
 Model::Model() :
     Retina(OpponentColorStage(SCALE)),
@@ -26,7 +25,6 @@ const std::map<OPPONENT, cv::Mat> & Model::GetOCOut() {
 void Model::init(cv::Mat & sourceImg) {
     src = sourceImg;
 
-    //todo check
     v4Out[OPPONENT::RG] = cv::Mat(src.rows, src.cols, src.type(), 0.f);
     v4Out[OPPONENT::GR] = cv::Mat(src.rows, src.cols, src.type(), 0.f);
     v4Out[OPPONENT::BY] = cv::Mat(src.rows, src.cols, src.type(), 0.f);
@@ -35,6 +33,7 @@ void Model::init(cv::Mat & sourceImg) {
 }
 
 cv::Mat Model::GetResult() {
+    PrepareDirs();
     Process();
     return out;
 }
@@ -42,23 +41,23 @@ cv::Mat Model::GetResult() {
 void Model::Process() {
     Iteration(0);
     int iterations = 1;
-    bool isStop;
+    bool isContinue = false;
     const OPPONENT ch[4] = {OPPONENT::RG, OPPONENT::GR, OPPONENT::YB, OPPONENT::BY};
-    while(!isStop && iterations != 10) {
+    do {
         v4Out.swap(v4OutOld);
         Iteration(iterations);
-        isStop = true;
+        isContinue = false;
         for(int i = 0; i < 4; i++){
-            isStop &= Util::matLessScalar(cv::abs(v4Out[ch[i]] - v4OutOld[ch[i]]), 0.0001);
+            bool isDifferent = Util::matLessScalar(cv::abs(v4Out[ch[i]] - v4OutOld[ch[i]]), 0.0001);
+            isContinue |= isDifferent;
         }
         ++iterations;
-    }
+    } while(isContinue && iterations <= 10);
     std::cout << "iterations total: " << iterations << std::endl;
 
     //tmp
-    //out = Util::perElementMax(v2Out);
-    out = v4Out[OPPONENT::RG];
-
+    out = Util::perElementMax(v2Out);
+    //out = v4Out[OPPONENT::RG];
 }
 
 void Model::Iteration(const int iteration) {
@@ -67,7 +66,7 @@ void Model::Iteration(const int iteration) {
     retinaOut = Retina.GetOutput();
 
     //V1 - Chromatic contour stage (4.2)
-    V1.init(retinaOut, this);
+    V1.init(retinaOut, this, iteration);
     v1Out = V1.getStageOutput(SCALE);
 
     for (auto & src : v1Out){
@@ -117,6 +116,11 @@ const cv::Mat & Model::getKernelEI() {
 
 const cv::Mat & Model::getKernelIE() {
     return Retina.getKernelIE();
+}
+
+void Model::PrepareDirs() {
+    int i = 0;
+    i++;
 }
 
 

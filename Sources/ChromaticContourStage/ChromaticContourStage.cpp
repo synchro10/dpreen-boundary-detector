@@ -18,8 +18,10 @@ ChromaticContourStage::ChromaticContourStage()
 
         for(int k = 0; k < MAX_K; k++){
 
-            evenFilters.push_back(cv::getGaborKernel(cv::Size(KERNEL_SIZE, KERNEL_SIZE), getSigma(s), CV_PI / 6 * k, lambda, gamma, 0., CV_32FC1));
-            oddFilters.push_back(cv::getGaborKernel(cv::Size(KERNEL_SIZE, KERNEL_SIZE), getSigma(s), CV_PI / 6 * k, lambda, gamma, CV_PI/2., CV_32FC1));
+            evenFilters.push_back(cv::getGaborKernel(cv::Size(KERNEL_SIZE, KERNEL_SIZE), getSigma(s),
+                                                     CV_PI / 6 * k, lambda, gamma, 0., CV_32FC1));
+            oddFilters.push_back(cv::getGaborKernel(cv::Size(KERNEL_SIZE, KERNEL_SIZE), getSigma(s),
+                                                    CV_PI / 6 * k, lambda, gamma, CV_PI/2., CV_32FC1));
 
         }
 
@@ -133,7 +135,7 @@ void ChromaticContourStage::init(cv::Mat lon, cv::Mat loff, cv::Mat rg, cv::Mat 
     iteration = 0;
 }
 
-void ChromaticContourStage::init(const std::map<OPPONENT, cv::Mat> &in, IModel *model) {
+void ChromaticContourStage::init(const std::map<OPPONENT, cv::Mat> &in, IModel *model, int iteration) {
     this->lon = in.at(ON);
     this->loff = in.at(OFF);
     this->rg = in.at(RG);
@@ -141,7 +143,7 @@ void ChromaticContourStage::init(const std::map<OPPONENT, cv::Mat> &in, IModel *
     this->by = in.at(BY);
     this->yb = in.at(YB);
     this->model = model;
-    iteration = 0;
+    this->iteration = iteration;
 }
 
 cv::Mat ChromaticContourStage::getREout(int scale, int k) {

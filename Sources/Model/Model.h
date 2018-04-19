@@ -47,6 +47,7 @@ private:
 
     void Process();
     void Iteration(const int iteration);
+    void PrepareDirs();
 };
 
 

@@ -57,7 +57,7 @@ void Util::saveImg(const cv::Mat &src, const std::string &name, const int iterat
     tmp.convertTo(tmp, CV_8UC4, 255.0, 0.0);
     std::string fileName;
     if (stage != "result"){
-        fileName = "../pictures/" + stage + "/" + std::to_string(iteration) + "_iter_" + name + ".jpg";
+        fileName = "../pictures/" + stage + "/" + name + "/" + std::to_string(iteration) + "_iter" + ".jpg";
     } else {
         fileName = "../pictures/" + name + ".jpg";
     }

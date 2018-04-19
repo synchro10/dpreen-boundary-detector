@@ -28,10 +28,10 @@ std::map<OPPONENT, cv::Mat> RegionEnhancementStage::getStageOut() {
     OPPONENT ml[4] = {OPPONENT::GR, OPPONENT::RG, OPPONENT::YB, OPPONENT::BY};
     for (int i = 0; i < 4; i++){
         cv::Mat DO = getDO(lm[i], ml[i]);
-        cv::Mat Wnew = getWnew(DO);
         cv::Mat Wold = DO;
+        cv::Mat Wnew = getWnew(Wold);
         int iterations = 1;
-        while(Util::matLessScalar(cv::abs(Wnew - Wold), eps)){
+        while(!Util::matLessScalar(cv::abs(Wnew - Wold), eps)){
             cv::Mat tmp = Wnew;
             Wnew = getWnew(Wold);
             Wold = std::move(tmp);

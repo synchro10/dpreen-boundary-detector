@@ -20,7 +20,7 @@ public:
     ChromaticContourStage();
     std::vector<cv::Mat> getStageOutput(int scale);
     void init(cv::Mat lon, cv::Mat loff, cv::Mat rg, cv::Mat gr, cv::Mat by, cv::Mat yb); //output of previous stage
-    void init(const std::map<OPPONENT, cv::Mat> &in, IModel *model);
+    void init(const std::map<OPPONENT, cv::Mat> &in, IModel *model, int iteration);
 
     //kostil'
     static int iteration;

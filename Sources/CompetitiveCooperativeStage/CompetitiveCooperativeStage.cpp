@@ -118,7 +118,8 @@ cv::Mat CompetitiveCooperativeStage::getGaussianKernel(float r, float tau, float
     }
 
     cv::Point2f src_center(gaussianKernel.cols/2.0F, gaussianKernel.rows/2.0F);
-    cv::Mat rot_mat = cv::getRotationMatrix2D(src_center, r, 1.0);
+    const double angle = CV_PI / 6 * r;
+    cv::Mat rot_mat = cv::getRotationMatrix2D(src_center, angle, 1.0);
     warpAffine(gaussianKernel, gaussianKernel, rot_mat, gaussianKernel.size());
 
     return gaussianKernel;
