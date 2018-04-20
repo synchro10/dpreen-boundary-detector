@@ -1,7 +1,3 @@
-//
-// Created by Ivan Kirov on 01.03.2018.
-//
-
 #include <opencv2/imgproc.hpp>
 #include <iostream>
 #include <opencv/cv.hpp>
@@ -18,32 +14,17 @@ ChromaticContourStage::ChromaticContourStage()
 
         for(int k = 0; k < MAX_K; k++){
 
+            //for real filter: psi = 0
             evenFilters.push_back(cv::getGaborKernel(cv::Size(KERNEL_SIZE, KERNEL_SIZE), getSigma(s),
                                                      CV_PI / 6 * k, lambda, gamma, 0., CV_32FC1));
+            // for imaginary filter: psi = -pi/2
             oddFilters.push_back(cv::getGaborKernel(cv::Size(KERNEL_SIZE, KERNEL_SIZE), getSigma(s),
-                                                    CV_PI / 6 * k, lambda, gamma, CV_PI/2., CV_32FC1));
+                                                    CV_PI / 6 * k, lambda, gamma, -CV_PI/2., CV_32FC1));
 
         }
 
         evenGaborFilters.push_back(evenFilters);
         oddGaborFilters.push_back(oddFilters);
-
-    }
-
-}
-
-
-float ChromaticContourStage::getFrequency(int scale) {
-
-    switch(scale){
-        case 0:
-            return 0.15f;
-        case 1:
-            return 0.07f;
-        case 2:
-            return 0.03f;
-        default:
-            return 0.f;
     }
 }
 
@@ -176,33 +157,17 @@ cv::Mat ChromaticContourStage::getREout(int scale, int k) {
 
 std::vector<cv::Mat> ChromaticContourStage::getStageOutput(int scale) {
     std::vector<cv::Mat> out;
-    for (int i = 0; i < MAX_K; i++)
+    for (int k = 0; k < MAX_K; k++)
     {
-        cv::Mat hOutput = getHOutput(scale, i);
-    /*    cv::imshow( "Display h", hOutput);                   // Show our image inside it.
-        cv::waitKey(0);*/
-        cv::Mat filter = getDifferenceGaussFilter(i);
+        cv::Mat hOutput = getHOutput(scale, k);
+        cv::Mat filter = model->getKernelIE();
         cv::Mat filtered;
         cv::filter2D(hOutput,filtered, hOutput.depth(), filter);
-        cv::Mat result;
-
-        result = (hOutput - kLambda * filtered) / (A3 + hOutput - filtered);
+        cv::Mat result = (hOutput - kLambda * filtered) / (A3 + hOutput - filtered);
         //cv::threshold(result, result, 0.0, 255, cv::THRESH_TOZERO);
         out.push_back(std::move(result));
     }
     ++iteration;
     return std::move(out);
 
-}
-
-cv::Mat ChromaticContourStage::getDifferenceGaussFilter(int k) {
-    double sigmaE = std::pow(2, k);
-    double sigmaI = 2 * sigmaE;
-
-    cv::Mat kernelE, kernelI;
-    kernelE = cv::getGaussianKernel(3, sigmaE);
-    kernelI = cv::getGaussianKernel(3, sigmaI);
-    cv::Mat kernelIE = kernelI - kernelE;
-    cv::threshold(kernelIE, kernelIE, 0.0, 255, cv::THRESH_TOZERO);
-    return kernelIE;
 }

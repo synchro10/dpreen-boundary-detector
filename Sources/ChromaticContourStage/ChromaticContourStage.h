@@ -44,16 +44,12 @@ private:
 
     //cv::Mat differenceOfGaussFilter;
 
-
-    float getFrequency(int scale);
     double getSigma(int scale);
     cv::Mat getSimpleCellActivity(cv::Mat src, cv::Mat filter);
     cv::Mat getSimpleCellE(cv::Mat src, int scale, int k);
     cv::Mat getSimpleCellF(cv::Mat src, int scale, int k);
     cv::Mat getREout(int scale, int k);
     cv::Mat getHOutput(int scale, int k); //according to 8
-    cv::Mat getDifferenceGaussFilter(int k);
-
 };
 
 

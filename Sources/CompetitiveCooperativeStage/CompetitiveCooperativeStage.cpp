@@ -172,7 +172,7 @@ void CompetitiveCooperativeStage::calcCSOutput(const int scale) {
 //        std::cout << zNU << std::endl;
         F[i] = zPU.mul(zNU) / (A5 + PU.mul(NU));
     }
-    //std::cout << F[0] << std::endl;
+//    std::cout << F[0] << std::endl;
 }
 
 void CompetitiveCooperativeStage::init(std::vector<cv::Mat> H) {

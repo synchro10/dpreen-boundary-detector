@@ -19,14 +19,15 @@ void Util::logMat(const cv::Mat &img, const std::string &name) {
 }
 
 bool Util::matLessScalar(const cv::Mat & mat, const double scalar) {
-    cv::Mat tmp = mat < scalar;
-    bool is = true;
-    for(int i = 0; i < mat.rows; i++){
-        for(int j = 0; j < mat.cols; j++){
-            is &= (mat.at<float>(i, j) < scalar);
+    for(int i = 1; i < mat.rows - 1; i++){
+        for(int j = 1; j < mat.cols - 1; j++){
+            float val = mat.at<float>(i, j);
+            if (val >= scalar){
+                return false;
+            }
         }
     }
-    return is;
+    return true;
 }
 
 cv::Mat Util::perElementMax(std::initializer_list<cv::Mat> list) {

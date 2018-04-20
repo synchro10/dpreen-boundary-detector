@@ -31,12 +31,13 @@ std::map<OPPONENT, cv::Mat> RegionEnhancementStage::getStageOut() {
         cv::Mat Wold = DO;
         cv::Mat Wnew = getWnew(Wold);
         int iterations = 1;
-        while(!Util::matLessScalar(cv::abs(Wnew - Wold), eps)){
-            cv::Mat tmp = Wnew;
+        bool isStop;
+        do {
+            Wold = std::move(Wnew);
             Wnew = getWnew(Wold);
-            Wold = std::move(tmp);
             iterations++;
-        }
+            isStop = Util::matLessScalar(cv::abs(Wnew - Wold), eps);
+        } while(!isStop && iterations <= 200);
         out[lm[i]] = Wnew;
         std::cout << "V4 iterations = " << iterations << std::endl;
     }
@@ -56,8 +57,8 @@ cv::Mat RegionEnhancementStage::getDO(OPPONENT lm, OPPONENT ml) {
 //according to (15)
 cv::Mat RegionEnhancementStage::getWnew(const cv::Mat &Wold) {
     cv::Mat Wnew = cv::Mat(Wold.rows, Wold.cols, Wold.type(), 0.f);
-    for (int i = 0; i < Wnew.rows; ++i){
-        for (int j = 0; j < Wnew.cols; ++j){
+    for (int i = 1; i < Wnew.rows - 1; ++i){
+        for (int j = 1; j < Wnew.cols - 1; ++j){
             float filtred1 = Nij[0].at<float>(i, j) * Wold.at<float>(i, j - 1) +
                     Nij[1].at<float>(i, j) * Wold.at<float>(i, j + 1) +
                     Nij[2].at<float>(i, j) * Wold.at<float>(i - 1, j) +
@@ -80,8 +81,8 @@ void RegionEnhancementStage::calcNpqij(const int scale) {
         Uij = Uij + Uk;
     }
 
-    for (int i = 0; i < Uij.rows; ++i){
-        for (int j = 0; j < Uij.cols; ++j){
+    for (int i = 1; i < Uij.rows - 1; ++i){
+        for (int j = 1; j < Uij.cols - 1; ++j){
             Nij[0].at<float>(i, j) = j != 0 ? expf(-1.f*Kp*(Uij.at<float>(i, j) + Uij.at<float>(i, j - 1)))
                                             : expf(-1.f*Kp*(Uij.at<float>(i, j)));
             Nij[1].at<float>(i, j) = j != Nij[0].cols - 1 ? expf(-1.f*Kp*(Uij.at<float>(i, j) + Uij.at<float>(i, j + 1)))

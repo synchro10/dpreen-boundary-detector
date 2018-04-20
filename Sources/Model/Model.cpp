@@ -41,23 +41,24 @@ cv::Mat Model::GetResult() {
 void Model::Process() {
     Iteration(0);
     int iterations = 1;
-    bool isContinue = false;
+    bool isStop;
     const OPPONENT ch[4] = {OPPONENT::RG, OPPONENT::GR, OPPONENT::YB, OPPONENT::BY};
     do {
-        v4Out.swap(v4OutOld);
+        //v4Out.swap(v4OutOld);
+        v4OutOld = std::move(v4Out);
         Iteration(iterations);
-        isContinue = false;
+        isStop = true;
         for(int i = 0; i < 4; i++){
-            bool isDifferent = Util::matLessScalar(cv::abs(v4Out[ch[i]] - v4OutOld[ch[i]]), 0.0001);
-            isContinue |= isDifferent;
+            bool dif_i = Util::matLessScalar(cv::abs(v4Out[ch[i]] - v4OutOld[ch[i]]), 0.0001);
+            isStop &= dif_i;
         }
         ++iterations;
-    } while(isContinue && iterations <= 10);
+    } while(!isStop && iterations <= 10);
     std::cout << "iterations total: " << iterations << std::endl;
 
     //tmp
-    out = Util::perElementMax(v2Out);
-    //out = v4Out[OPPONENT::RG];
+//    out = Util::perElementMax(v2Out);
+    out = v4Out[OPPONENT::RG];
 }
 
 void Model::Iteration(const int iteration) {
