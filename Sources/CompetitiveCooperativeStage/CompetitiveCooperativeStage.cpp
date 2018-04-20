@@ -40,41 +40,37 @@ cv::Mat CompetitiveCooperativeStage::getBipKernel(float k, float kl, float dc) {
 
     cv::Mat kernel = cv::Mat::zeros(bipKernelSize, bipKernelSize, CV_32FC1);
 
-    const auto y_mid = (bipKernelSize-1) / 2.0;
-    const auto x_mid = (bipKernelSize-1) / 2.0;
+    const int y_mid = (bipKernelSize-1) / 2;
+    const int x_mid = (bipKernelSize-1) / 2;
 
     double angle = CV_PI / 6 * k;
-
-/*    const auto x_spread = 1. / (pow(sigma, 2)*2);
-    const auto y_spread = 1. / (pow(sigma, 2)*2);*/
-
-    //const auto denominator = 8 * std::atan(1) * sigma * sigma;
 
     std::vector<std::vector<double> > bip(
             bipKernelSize,
             std::vector<double>(bipKernelSize));
 
 
-    for (auto i = 0;  i < bipKernelSize;  ++i)  {
-        auto x = i - x_mid;
-        for(auto j = 0; j < bipKernelSize; ++j){
-            auto y = j - y_mid;
+    for (int i = 0;  i < bipKernelSize;  ++i)  {
+        int x = i - x_mid;
+        for(int j = 0; j < bipKernelSize; ++j){
+            int y = j - y_mid;
 
-            auto x_= (x - dc * std::cos(angle))*std::cos(angle) + (y - dc * std::sin(angle))*std::sin(angle);
-            auto y_= (y - dc * std::cos(angle))*std::sin(angle) + (y - dc * std::sin(angle))*std::cos(angle);
+            double xc = dc * std::cos(angle);
+            double yc = dc * std::sin(angle);
+            double x_= (x - xc)*std::cos(angle) + (y - yc)*std::sin(angle);
+            double y_= (y - xc)*std::sin(angle) + (y - yc)*std::cos(angle);
 
             bip[i][j] = std::exp(-kl * std::sqrt( std::pow(x_/tau, 2) + std::pow(y_, 2) ));
         }
-
     }
 
-    for (auto i = 0;  i < bipKernelSize;  ++i) {
-        for (auto j = 0; j < bipKernelSize; ++j) {
+    for (int i = 0;  i < bipKernelSize;  ++i) {
+        for (int j = 0; j < bipKernelSize; ++j) {
             kernel.at<float>(j, i) = static_cast<float>(bip[i][j]);
         }
     }
 
-    float denominator = cv::norm(kernel, cv::NORM_L1);
+    double denominator = cv::norm(kernel, cv::NORM_L1);
     kernel = kernel / denominator;
 
     return kernel;
